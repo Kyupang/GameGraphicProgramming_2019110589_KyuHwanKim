@@ -1,34 +1,34 @@
-﻿#include "Game/Game.h"
+#include "Game/Game.h"
 
-using namespace Microsoft::WRL;
 namespace library
 {
-    
-
-
     /*--------------------------------------------------------------------
       Global Variables
     --------------------------------------------------------------------*/
+
     HINSTANCE               g_hInst = nullptr;
     HWND                    g_hWnd = nullptr;
     D3D_DRIVER_TYPE         g_driverType = D3D_DRIVER_TYPE_NULL;
     D3D_FEATURE_LEVEL       g_featureLevel = D3D_FEATURE_LEVEL_11_0;
-    Microsoft::WRL::ComPtr<ID3D11Device> g_pd3dDevice;
-    Microsoft::WRL::ComPtr<ID3D11Device> g_pd3dDevice1;
-    Microsoft::WRL::ComPtr<ID3D11DeviceContext> g_pImmediateContext;
-    Microsoft::WRL::ComPtr<ID3D11DeviceContext1> g_pImmediateContext1;
-    Microsoft::WRL::ComPtr<IDXGISwapChain> g_pSwapChain;
-    Microsoft::WRL::ComPtr<IDXGISwapChain1> g_pSwapChain1;
-    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> g_pRenderTargetView;
+
+    ComPtr<ID3D11Device>           g_pd3dDevice(nullptr);
+    ComPtr<ID3D11Device1>          g_pd3dDevice1(nullptr);
+    ComPtr<ID3D11DeviceContext>    g_pImmediateContext(nullptr);
+    ComPtr<ID3D11DeviceContext1>   g_pImmediateContext1(nullptr);
+    ComPtr<IDXGISwapChain>         g_pSwapChain(nullptr);
+    ComPtr<IDXGISwapChain1>        g_pSwapChain1(nullptr);
+    ComPtr<ID3D11RenderTargetView>  g_pRenderTargetView(nullptr);
 
     /*--------------------------------------------------------------------
       Forward declarations
     --------------------------------------------------------------------*/
-   
+
     /*F+F+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       Function: WindowProc
+
       Summary:  Defines the behavior of the window—its appearance, how
                 it interacts with the user, and so forth
+
       Args:     HWND hWnd
                   Handle to the window
                 UINT uMsg
@@ -37,54 +37,23 @@ namespace library
                   Additional data that pertains to the message
                 LPARAM lParam
                   Additional data that pertains to the message
+
       Returns:  LRESULT
                   Integer value that your program returns to Windows
     -----------------------------------------------------------------F-F*/
-    //--------------------------------------------------------------------------------------
-    // Window Procedure
-    //--------------------------------------------------------------------------------------
-    
-   
-    LRESULT CALLBACK WndProc(_In_ HWND hWnd, _In_ UINT message, _In_ WPARAM wParam, _In_ LPARAM lParam)
-    {
-        PAINTSTRUCT ps;
-        HDC hdc;
-
-
-        switch (message)
-        {
-        case WM_CLOSE:
-            if (MessageBox(hWnd,
-                L"Really quit?",
-                L"Game Graphics Programming",
-                MB_OKCANCEL) == IDOK)
-            {
-                DestroyWindow(hWnd);
-            }
-            return 0;
-
-        case WM_DESTROY:
-            PostQuitMessage(0);
-            return 0;
-
-
-        default: // 알아서 해줄 것
-            return DefWindowProc(hWnd, message, wParam, lParam);
-        }
-
-        return 0;
-    }
+    LRESULT CALLBACK WindowProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam);
 
     //--------------------------------------------------------------------------------------
-    // Register class, create window and show window
-    //--------------------------------------------------------------------------------------
+// Register class and create window
+//--------------------------------------------------------------------------------------
     HRESULT InitWindow(_In_ HINSTANCE hInstance, _In_ INT nCmdShow)
     {
+
         // Register class
         WNDCLASSEX wcex;
         wcex.cbSize = sizeof(WNDCLASSEX);
         wcex.style = CS_HREDRAW | CS_VREDRAW;
-        wcex.lpfnWndProc = WndProc;
+        wcex.lpfnWndProc = WindowProc;
         wcex.cbClsExtra = 0;
         wcex.cbWndExtra = 0;
         wcex.hInstance = hInstance;
@@ -92,7 +61,7 @@ namespace library
         wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
         wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
         wcex.lpszMenuName = nullptr;
-        wcex.lpszClassName = L"TutorialWindowClass";
+        wcex.lpszClassName = L"Game Graphics Programming";
         wcex.hIconSm = LoadIcon(wcex.hInstance, (LPCTSTR)IDI_TUTORIAL1);
         if (!RegisterClassEx(&wcex))
             return E_FAIL;
@@ -101,7 +70,7 @@ namespace library
         g_hInst = hInstance;
         RECT rc = { 0, 0, 800, 600 };
         AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
-        g_hWnd = CreateWindow(L"TutorialWindowClass", L"Direct3D 11 Tutorial 1: Direct3D 11 Basics",
+        g_hWnd = CreateWindow(L"Game Graphics Programming", L"Game Graphics Programming Lab 01:Direct3D 11 Basics",
             WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
             CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, nullptr, nullptr, hInstance,
             nullptr);
@@ -113,26 +82,49 @@ namespace library
         return S_OK;
     }
 
-   
+    //--------------------------------------------------------------------------------------
+    // Called every time the application receives a message
+    //--------------------------------------------------------------------------------------
+    LRESULT CALLBACK WindowProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam)
+    {
+        PAINTSTRUCT ps;
+        HDC hdc;
+
+        switch (uMsg)
+        {
+        case WM_PAINT:
+            hdc = BeginPaint(hWnd, &ps);
+            EndPaint(hWnd, &ps);
+            break;
+
+        case WM_DESTROY:
+            PostQuitMessage(0);
+            break;
+
+            // Note that this tutorial does not handle resizing (WM_SIZE) requests,
+            // so we created the window without the resize border.
+
+        default:
+            return DefWindowProc(hWnd, uMsg, wParam, lParam);
+        }
+
+        return 0;
+    }
 
 
     //--------------------------------------------------------------------------------------
-    // Create Direct3D device and context
+    // Create Direct3D device and swap chain
     //--------------------------------------------------------------------------------------
     HRESULT InitDevice()
     {
-       
         HRESULT hr = S_OK;
 
         RECT rc;
         GetClientRect(g_hWnd, &rc);
-        UINT width = rc.right - rc.left;
-        UINT height = rc.bottom - rc.top;
+        UINT width = rc.right - static_cast<UINT>(rc.left);
+        UINT height = rc.bottom - static_cast<UINT>(rc.top);
 
         UINT createDeviceFlags = 0;
-#ifdef _DEBUG
-        createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
-#endif
 
         D3D_DRIVER_TYPE driverTypes[] =
         {
@@ -155,7 +147,7 @@ namespace library
         {
             g_driverType = driverTypes[driverTypeIndex];
             hr = D3D11CreateDevice(nullptr, g_driverType, nullptr, createDeviceFlags, featureLevels, numFeatureLevels,
-                D3D11_SDK_VERSION, g_pd3dDevice.GetAddressOf() , &g_featureLevel, g_pImmediateContext.GetAddressOf());
+                D3D11_SDK_VERSION, g_pd3dDevice.GetAddressOf(), &g_featureLevel, g_pImmediateContext.GetAddressOf());
 
             if (hr == E_INVALIDARG)
             {
@@ -171,19 +163,20 @@ namespace library
             return hr;
 
         // Obtain DXGI factory from device (since we used nullptr for pAdapter above)
-        Microsoft::WRL::ComPtr<IDXGIFactory1> dxgiFactory;
+        ComPtr<IDXGIFactory1>           dxgiFactory(nullptr);
         {
-            Microsoft::WRL::ComPtr<IDXGIDevice> dxgiDevice;
-            if (SUCCEEDED(g_pd3dDevice.As(&dxgiDevice)))
+            ComPtr<IDXGIDevice>           dxgiDevice(nullptr);
+            // IDXGIDevice* dxgiDevice = nullptr;
+            hr = g_pd3dDevice.As(&dxgiDevice);
+            if (SUCCEEDED(hr))
             {
-                Microsoft::WRL::ComPtr<IDXGIAdapter> adapter;
+                ComPtr<IDXGIAdapter>           adapter(nullptr);
+
                 hr = dxgiDevice->GetAdapter(adapter.GetAddressOf());
                 if (SUCCEEDED(hr))
                 {
-                    adapter->GetParent(__uuidof(IDXGIFactory1), (&dxgiFactory));
-                   
+                    hr = adapter->GetParent(__uuidof(IDXGIFactory1), (&dxgiFactory));
                 }
-                
             }
         }
         if (FAILED(hr))
@@ -192,18 +185,15 @@ namespace library
         // Create swap chain
         ComPtr<IDXGIFactory2>           dxgiFactory2(nullptr);
         hr = dxgiFactory.As(&dxgiFactory2);
-
         if (dxgiFactory2)
         {
             // DirectX 11.1 or later
-            
-            if (SUCCEEDED(g_pd3dDevice.As(&g_pd3dDevice1)))
+            hr = g_pd3dDevice.As(&g_pd3dDevice1);
+            if (SUCCEEDED(hr))
             {
-               hr= g_pImmediateContext.As(&g_pImmediateContext1);
+                hr = g_pImmediateContext.As(&g_pImmediateContext1);
             }
 
-           
-           
             DXGI_SWAP_CHAIN_DESC1 sd = {};
             sd.Width = width;
             sd.Height = height;
@@ -216,10 +206,8 @@ namespace library
             hr = dxgiFactory2->CreateSwapChainForHwnd(g_pd3dDevice.Get(), g_hWnd, &sd, nullptr, nullptr, g_pSwapChain1.GetAddressOf());
             if (SUCCEEDED(hr))
             {
-               hr= g_pSwapChain1.As(&g_pSwapChain);
+                hr = g_pSwapChain1.As(&g_pSwapChain);
             }
-
-            
         }
         else
         {
@@ -243,19 +231,18 @@ namespace library
         // Note this tutorial doesn't handle full-screen swapchains so we block the ALT+ENTER shortcut
         dxgiFactory->MakeWindowAssociation(g_hWnd, DXGI_MWA_NO_ALT_ENTER);
 
-        
 
         if (FAILED(hr))
             return hr;
 
         // Create a render target view
-        Microsoft::WRL::ComPtr<ID3D11Texture2D> pBackBuffer = nullptr;
+        ComPtr<ID3D11Texture2D>           pBackBuffer(nullptr);
+
         hr = g_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (&pBackBuffer));
         if (FAILED(hr))
             return hr;
 
         hr = g_pd3dDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, g_pRenderTargetView.GetAddressOf());
-        
         if (FAILED(hr))
             return hr;
 
@@ -272,12 +259,12 @@ namespace library
         g_pImmediateContext->RSSetViewports(1, &vp);
 
         return S_OK;
-
-
     }
 
 
-
+    //--------------------------------------------------------------------------------------
+    // Render the frame
+    //--------------------------------------------------------------------------------------
     void Render()
     {
         // Just clear the backbuffer
@@ -285,10 +272,13 @@ namespace library
         g_pSwapChain->Present(0, 0);
     }
 
-    // 윈도우에서 오는 메시지에 대응하는 함수를 줘 ~~~
 
+    //--------------------------------------------------------------------------------------
+    // Clean up the objects we've created
+    //--------------------------------------------------------------------------------------
     void CleanupDevice()
     {
         if (g_pImmediateContext) g_pImmediateContext->ClearState();
     }
 }
+
