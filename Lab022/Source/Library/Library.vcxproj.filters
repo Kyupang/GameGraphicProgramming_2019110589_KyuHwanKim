@@ -17,40 +17,11 @@
       <UniqueIdentifier>{75f6b653-7c5d-4c94-a70b-ddbadfd656e6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Renderer">
-      <UniqueIdentifier>{5e29c8c2-0234-44be-9ed9-e76557214149}</UniqueIdentifier>
+      <UniqueIdentifier>{18c5736a-028a-4571-a3fa-a2a04165c5d9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Window">
-      <UniqueIdentifier>{602d6c38-480a-46ec-8ebe-3ee0ce78a204}</UniqueIdentifier>
+      <UniqueIdentifier>{7c06f189-77eb-4086-8e08-582ce7977f08}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Game">
-      <UniqueIdentifier>{886fbb11-0090-41ed-bee5-81d0885e93d1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Window">
-      <UniqueIdentifier>{9f1540a9-95c2-4ddb-88d7-cc492f68d8dd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Renderer">
-      <UniqueIdentifier>{fa98643b-ed88-4012-ad31-f2ebb2e69e8b}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Common.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Game.h">
-      <Filter>Header Files\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer.h">
-      <Filter>Header Files\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseWindow.h">
-      <Filter>Header Files\Window</Filter>
-    </ClInclude>
-    <ClInclude Include="MainWindow.h">
-      <Filter>Header Files\Window</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">
@@ -58,14 +29,34 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\Renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\BaseWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\MainWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="Game\Game.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer.cpp">
-      <Filter>Source Files\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="MainWindow.cpp">
+    <ClCompile Include="Window\MainWindow.cpp">
       <Filter>Source Files\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Renderer.cpp">
+      <Filter>Source Files\Renderer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

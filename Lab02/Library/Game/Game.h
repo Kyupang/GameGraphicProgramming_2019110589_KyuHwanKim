@@ -1,9 +1,12 @@
-﻿/*+===================================================================
+/*+===================================================================
   File:      GAME.H
+
   Summary:   Game header file that contains declarations of functinos
-             used for the lab samples of Game Graphics Programming
+			 used for the lab samples of Game Graphics Programming 
              course.
+
   Classes: Game
+
   © 2022 Kyung Hee University
 ===================================================================+*/
 #pragma once
@@ -17,7 +20,9 @@ namespace library
 {
     /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
       Class:    Game
+
       Summary:  Main game engine class
+
       Methods:  Initialize
                   Initializes the components of the game
                 Run

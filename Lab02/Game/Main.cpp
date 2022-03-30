@@ -1,8 +1,11 @@
-﻿/*+===================================================================
+/*+===================================================================
   File:      MAIN.CPP
-  Summary:   This application demonstrates creating a Direct3D 11
+
+  Summary:   This application demonstrates creating a Direct3D 11 
              device in a object-oriented fashion
+
   Origin:    https://docs.microsoft.com/en-us/previous-versions//ff729719(v=vs.85)
+
   Originally created by Microsoft Corporation under MIT License
   © 2022 Kyung Hee University
 ===================================================================+*/
@@ -15,9 +18,11 @@
 
 /*F+F+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   Function: wWinMain
+
   Summary:  Entry point to the program. Initializes everything and
             goes into a message processing loop. Idle time is used to
             render the scene.
+
   Args:     HINSTANCE hInstance
               Handle to an instance.
             HINSTANCE hPrevInstance
@@ -28,6 +33,7 @@
             INT nCmdShow
               Flag that says whether the main application window
               will be minimized, maximized, or shown normally
+
   Returns:  INT
               Status code.
 -----------------------------------------------------------------F-F*/
